@@ -1,0 +1,334 @@
+<!-- enterとかbackspaceとか押されたときの挙動を書きました -->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <meta name="GENERATOR" content="UTF-8 Writer" />
+<title>タイピングゲーム</title>
+
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+document.onkeydown = typeGame;  //キー押下時に関数typeGame()を呼び出す
+
+//英単語を格納する配列
+var q_array = new Array("come", "get", "give", "go", "keep", "let", "make", "put", "seem", "take", "be", "do", "have", "say", "see", "send", "may", "will", "about", "across", "after", "against", "among", "at", "before", "between", "by", "down", "from", "in", "off", "on", "over", "through", "to", "under", "up", "with", "as", "for", "of", "till", "than", "all", "any", "every", "no", "other", "some", "such", "and", "because", "but", "or", "if", "though", "while", "how", "when", "where", "why", "again", "ever", "far", "forward", "here", "near", "now", "out", "still", "then", "there", "together", "well", "almost", "enough", "even", "little", "much", "only", "quite", "so", "very", "tomorrow", "yesterday", "north", "south", "east", "west", "please", "yes", "account", "act", "addition", "adjustment", "advertisement", "agreement", "air", "amount", "amusement", "animal", "answer", "approval", "argument", "art", "attack", "attempt", "attention", "attraction", "authority", "back", "balance", "base", "behaviour", "belief", "birth", "bit", "bite", "blood", "blow", "body", "breath", "brother", "building", "burn", "burst", "business", "care", "cause", "chance", "change", "cloth", "color", "comfort", "committee", "company", "comparison", "competition", "condition", "connection", "control", "cook", "copper", "copy", "cotton", "cough", "country", "cover", "crack", "credit", "crime", "crush", "cry", "current", "curve", "damage", "danger", "daughter", "day", "death", "debt", "decision", "degree", "design", "desire", "destruction", "detail", "development", "digestion", "direction", "discovery", "discussion", "disease", "distance", "distribution", "division", "doubt", "drink", "driving", "dust", "earth", "edge", "education", "effect", "end", "error", "event", "example", "exchange", "existence", "expansion", "experience", "expert", "fact", "fall", "family", "father", "fear", "feeling", "fiction", "field", "fight", "fire", "flame", "flight", "flower", "fold", "food", "force", "form", "friend", "front", "fruit", "glass", "gold", "government", "grain", "grass", "grip", "group", "growth", "guide", "harbor", "harmony", "hate", "hearing", "heat", "help", "history", "hole", "hope", "hour", "humor", "ice", "idea", "impulse", "increase", "industry", "ink", "insect", "instrument", "insurance", "interest", "invention", "iron", "jelly", "join", "journey", "judge", "jump", "kick", "kiss", "knowledge", "land", "language", "laugh", "law", "lead", "learning", "letter", "level", "lift", "light", "limit", "liquid", "list", "look", "loss", "love", "machine", "man", "manager", "mark", "market", "mass", "meal", "measure", "meat", "meeting", "memory", "metal", "middle", "milk", "mind", "mine", "minute", "mist", "money", "month", "morning", "mother", "motion", "mountain", "move", "music", "name", "nation", "need", "news", "night", "noise", "note", "number", "observation", "offer", "oil", "operation", "opinion", "order", "organization", "ornament", "owner", "page", "pain", "paint", "paper", "part", "paste", "payment", "peace", "person", "place", "plant", "play", "pleasure", "point", "poison", "polish", "porter", "position", "powder", "power", "price", "print", "process", "produce", "profit", "property", "prose", "protest", "pull", "punishment", "purpose", "push", "quality", "question", "rain", "range", "rate", "ray", "reaction", "reading", "reason", "record", "regret", "relation", "religion", "representative", "request", "respect", "rest", "reward", "rhythm", "rice", "river", "road", "roll", "room", "rub", "rule", "run", "salt", "sand", "scale", "science", "sea", "seat", "secretary", "selection", "self", "sense", "servant", "sex", "shade", "shake", "shame", "shock", "side", "sign", "silk", "silver", "sister", "size", "sky", "sleep", "slip", "slope", "smash", "smell", "smile", "smoke", "sneeze", "snow", "soap", "society", "son", "song", "sort", "sound", "soup", "space", "stage", "start", "statement", "steam", "steel", "step", "stitch", "stone", "stop", "story", "stretch", "structure", "substance", "sugar", "suggestion", "summer", "support", "surprise", "swim", "system", "talk", "taste", "tax", "teaching", "tendency", "test", "theory", "thing", "thought", "thunder", "time", "tin", "top", "touch", "trade", "transport", "trick", "trouble", "turn", "twist", "unit", "use", "value", "verse", "vessel", "view", "voice", "walk", "war", "wash", "waste", "water", "wave", "wax", "way", "weather", "week", "weight", "wind", "wine", "winter", "woman", "wood", "wool", "word", "work", "wound", "writing", "year", "angle", "ant", "apple", "arch", "arm", "army", "baby", "bag", "ball", "band", "basin", "basket", "bath", "bed", "bee", "bell", "berry", "bird", "blade", "board", "boat", "bone", "book", "boot", "bottle", "box", "boy", "brain", "brake", "branch", "brick", "bridge", "brush", "bucket", "bulb", "button", "cake", "camera", "card", "cart", "carriage", "cat", "chain", "cheese", "chest", "chin", "church", "circle", "clock", "cloud", "coat", "collar", "comb", "cord", "cow", "cup", "curtain", "cushion", "dog", "door", "drain", "drawer", "dress", "drop", "ear", "egg", "engine", "eye", "face", "farm", "feather", "finger", "fish", "flag", "floor", "fly", "foot", "fork", "fowl", "frame", "garden", "girl", "glove", "goat", "gun", "hair", "hammer", "hand", "hat", "head", "heart", "hook", "horn", "horse", "hospital", "house", "island", "jewel", "kettle", "key", "knee", "knife", "knot", "leaf", "leg", "library", "line", "lip", "lock", "map", "match", "monkey", "moon", "mouth", "muscle", "nail", "neck", "needle", "nerve", "net", "nose", "nuts", "office", "orange", "oven", "parcel", "pen", "pencil", "picture", "pig", "pin", "pipe", "plane", "plate", "cultivate", "pocket", "pot", "potato", "prison", "pump", "rail", "rat", "receipt", "ring", "rod", "roof", "root", "sail", "school", "scissors", "screw", "seed", "sheep", "shelf", "ship", "shirt", "shoe", "skin", "skirt", "snake", "sock", "spade", "sponge", "spoon", "spring", "square", "stamp", "star", "station", "stem", "stick", "stocking", "stomach", "store", "street", "sun", "table", "tail", "thread", "throat", "thumb", "ticket", "tongue", "tooth", "town", "train", "tray", "tree", "trousers", "umbrella", "wall", "watch", "wheel", "whip", "whistle", "window", "wing", "wire", "worm", "able", "acid", "angry", "automatic", "beautiful", "black", "boiling", "bright", "broken", "brown", "cheap", "chemical", "chief", "clean", "clear", "common", "complex", "conscious", "cut", "deep", "dependent", "early", "elastic", "electric", "equal", "fat", "fertile", "first", "fixed", "flat", "free", "frequent", "full", "general", "good", "great", "gray", "hanging", "happy", "hard", "healthy", "high", "hollow", "important", "kind", "like", "living", "long", "male", "married", "material", "medical", "military", "natural", "necessary", "new", "normal", "open", "parallel", "past", "physical", "political", "poor", "possible", "present", "private", "probable", "quick", "quiet", "ready", "red", "regular", "responsible", "right", "round", "same", "second", "separate", "serious", "sharp", "smooth", "sticky", "stiff", "straight", "strong", "sudden", "sweet", "tall", "thick", "tight", "tired", "true", "violent", "waiting", "warm", "wet", "wide", "wise", "yellow", "young", "awake", "bad", "bent", "bitter", "blue", "certain", "cold", "complete", "cruel", "dark", "dead", "dear", "different", "dirty", "dry", "false", "feeble", "female", "foolish", "future", "green", "ill", "last", "late", "left", "loose", "loud", "low", "mixed", "narrow", "old", "opposite", "public", "rough", "sad", "safe", "secret", "short", "shut", "simple", "slow", "small", "soft", "solid", "special", "strange", "thin", "white", "wrong", "world", "data", "also", "mobile", "economic", "around", "president", "financial", "international", "social", "already", "information", "into", "according to", "disgust");
+
+//英単語の説明文を格納する配列
+var exp_array = new Array("訪れる  来る","受け取る  手に入れる","あたえる","行く"," 保つ  保存する","させる 許す","作る","置く","見える  思える","取る  つかむ","ある  存在する","する  振るまう","持っている  身につけている","言う  話す  命ずる","見る  見える  知っている","送る","してもいい  かもしれない","するつもりだ  しようと思う","＊＊＊について  ざっと"," 横切った  横に","＊＊＊の後に  後で","反抗して  逆らって","＊＊＊の間に  ＊＊＊の中で","＊＊＊に  ＊＊＊において","先に  前に","中間に  間に","＊＊＊のそばで  ＊＊＊によって","下に  下へ","＊＊＊から","中に  内側に","＊＊＊から離れて","うえに","上の方に","から","＊＊＊へ","＊＊＊の下に","上方へ  上向きに","いっしょに  ともに","同じように","＊＊＊のために","＊＊＊の  ＊＊＊に属する","＊＊＊まで","＊＊＊よりも","すべて","なんらか  いくらか  少しは","あらゆる","いいえ  なにも","ほかの","いくつかの","こんな  これほど  しばしば","＊＊＊と","なぜなら","しかし","または","もしも","だが  そうはいうものの","期間  時間","方法","時期","場所","理由","さらに  またまた","つねに  いつも","はるかに  遠くへ","前に  前方へ  お先に","ここに","ほぼ  ほとんど","今  今では","外に","静かな  静止した","それから  続いて  その次に","そこに  あそこで","同時に  ともに","よく","ほぼ  ほとんど","十分  たくさん","均等な  同じの","わずか","ほぼ","ただひとり  ただひとつ","すっかり  全く","現に  それは","とても  いとも  いっそう","あす  あした","昨日","北","南","東","西","喜ばせる  楽します","肯定的な返答","説明","行動する  立ち振る舞う","付け足し","手直し  修正  変更","アド  広告","協定  一致","空気  飛行","量  計測した大きさ","楽しみ  エンターテインメント","動物","答える  解答","賛成  承認","議論  主張","芸術  工芸","攻める  取り掛かる","試みる  企てる","注意  世話","魅力  引力","権威  認可","以前に  昔に","バランスをとる  つりあいを取る","基礎づける  基づく","行儀  行ない  振る舞い","印象  感じ  気分","生みだす  産む","かけら","かみつく","血液  気質","吹く  噴く","本体  身体","呼吸  息","兄  弟  兄弟","建設  構築","燃す  焦がす","爆発  破裂","シゴト  事業","整備  メンテナンス  世話","原因  根拠","賭け  チャンス  機会","変質  変化","生地  布地","色合い  個性","快適  なぐさめ","コミッティ  委員会","付添い  会社","比較","競争  競技","条件  状態","結びつき  関係","制御する  取り締まる","炊事する  料理する","銅  銅製  銅色","コピー  再現  複製","綿  コットン","せき","国家  国民  いなか","おおう  かぶせる","ひびわれる","信用  業績","犯罪","壊れる  つぶれる","めそめそする  泣く","流れ  水流  電流","曲がる","そこなう  傷める","リスク  危険","娘  令嬢","昼間  日  機会","絶命  死亡","負債  借り","判断  結論","レベル  学位  角度","計画  設計  デザイン","欲しがる  希望  願望","撃滅  破壊","詳しく述べる","発展  開発","消化","舵取り  指示  ガイド","発見","話し合い  ディスカッション","不快な状態  病気","引き離す","配布  流通","分割  分裂","怪しむ  疑う","飲む","運転","散らかす","地球  大地","刃  境界","教育  エデュケーション","結果  影響","終える  打ち切る","間違い  誤り  エラー","できごと  イベント","見本  例題","取り替える  交換する","存在  生存","引き伸ばし  拡大","経験  体験","専門家  熟練者","事実  できごと","落ちる","家族  一族","父親","恐怖  恐れ","感じ  気持","作り話","野原  畑  一面の広がり","ファイト  戦い","焼く","火炎","飛行 脱出","花を咲かす","折りたたむ  巻きつける","食べ物  栄養物","勢い  力","形姿  外形  形","友達","正面  前面","くだもの","ガラス  グラス","黄金  ゴールド","統治すること  支配  政府","穀物  ひと粒","芝生  牧草","取っ手  握ること","集まり  集り  グループ","成長  生育","案内する  手引きする","港  避難所","調和  ハーモニー","うらむ  憎む","聞くこと  聴覚","暖める  熱する","助ける  役立つ","歴史  記録","穴  くぼみ  欠点","実現させたいと願う","時間  60分","ユーモア  おかしさ  気持ち","氷","着想  アタマに浮かんだ考え  意見","衝動  刺激  推進力","増やす  増益  増加","産業  工業","インク","虫  昆虫","器具  道具  工具  楽器","保険  備え","気晴らし  興味  関心事","考案  発明","鉄  アイロン","ゼリー化する","交わる  連結","旅行  旅路","判断する  評価する","跳躍する  ジャンプ","蹴り  キック ","くちづけ","知識  認識  認知","土地  地面","言語","笑う  笑む","法律","導く  誘導","修得  学習","便り  手紙","水平になる  水平飛行に移る","持ち上げる","明るい  明らか","制約  押さえる","液体","挙げる  列挙する","見える  みえる","敗北","愛情","機械  マシン","人間  男性","管理職  経営者","目印  目標","市場","大きな塊  集団","食事","計測する  基準に照らして判断する","肉  中身","集まり  集合","記憶  記憶力","メタリック  金属的","中位","牛乳","気持ち  心  精神","私の","分  1分","霧  かすみ","硬貨  お金","月","朝","母親","動き  移動","山  山岳","動く","ミュージック  音楽","名前","国家  国民","動機  必要性","ニュース  報道","夜","騒ぐ ","記録  通達","数  人数  個数","観測  観察 ","提供する  提案する","オイル  油","運転  運用","意見  持論","配列  順序","設立  組織","装飾  飾り","持主","ページ","痛み","色つけ  塗装","紙","ある程度  一部分は","貼りつける","入金  払出 ","和平  安らぎ ","個人  人間","場所  地位","植物  草木","遊ぶ  試合する  演奏する","喜び  快楽","点  地点  得点  先端","毒","磨る  研ぐ","運搬人  門番","場所  立場","粉  粉末","力  権力  原動力","価格  代償","印刷  発行","過程  プロセス","生産する  創作する","得する  儲ける","所有物  不動産  特性","散文","断言する  主張する  抗議する ","引っぱる ","処罰  制裁 ","目的  用途","押す ","品質 ","問いただす たずねる","雨が降る","範囲","割合  速度","光線","反応  手応え","読み取り","推論  理由","レコード  記録  成績","惜しむ  悔やむ","結付き  関係","信仰  信条","代表する","要求  頼む","尊敬  評価","休む  休息する","報いる","リズム  拍子","おコメ","川 ","道筋  道路","転がる  転がす","部屋","こする  摩擦する","ルール  規則","走る","塩","砂","目盛り  ものさし  段階","科学","海","着席させる","事務官  秘書  書記","選択  より抜き","自分  自身","感覚  気持ち","使用人","性別","影  傘  濃淡","振る  ゆり動かす","恥  恥ずかしさ","ショック  衝撃","片面  片側","記号  合図  標識  看板","絹糸  シルク  絹布","銀  銀製品  銀色","姉妹  姉  妹","サイズ","空","眠る","すべる  すべらせる","傾ける","打ち付ける  打ち壊す","においがする  においをかぐ","ほほ笑む","煙を出す  タバコを吸う","くしゃみをする","雪が降る","せっけん  洗剤","世界  社会","息子","歌  歌唱","分類する  整列させる","鳴る  響く","スープ","スペース  空間","区間  舞台","開始  着手","述べる  声明 ","蒸す  蒸らす","鋼鉄","段  段階  階段","ぬい合わせる","石","ストップ  休止","物語  お話","伸張  伸ばす","構造  建築物","物質  実体  中身","さとう","提案 ","夏","支える  支持する","驚き","泳ぎ  水泳","システム  系統  体系","話す  演説する","味覚  風味","課税","教え  教育  指導","傾向","テスト","理論  学説","モノ  物体","思索  考えること","雷  雷鳴  咆哮","時 年月","スズ  ブリキ","てっぺん","タッチ  接触","交換","運輸  運送  運び","いたずら  たくらみ","故障  問題点","回転させる  まわす  ひねる","ひねる  ねじる  寄り合わせる","単一体  集合体  単位  部隊","使う","価値  評価 ","詩節  詩句","容器  船舶","視野  光景  視点","声","歩く","戦争","洗う","浪費する  無駄にする","水","波","ロウ  ロウ状のもの","道  方式","天気","週","重さ","風","ワイン","冬","女性","樹木  木材","羊毛","言葉  単語","労働  訓練","負傷  痛手","作文  書きもの","年","角度","アリ","リンゴ","カーブ  弯曲  アーチ","武装  備える  装備","軍団  部隊","ベビー  赤ん坊","ふくろ  かばん","球  ボール","しばるもの  ひも","洗面器  水たまり","かご","入浴  風呂","ベッド  寝床","蜂  蜜蜂","ベル  鐘","ベリー  いちご","鳥","刃物  ひげそり","板","小船  ボート","骨","本","ブーツ  長靴","ビン","箱","男の子  ボーイ","頭脳","歯止め  ブレーキ","枝  枝分れ","ブロック  レンガ","橋  橋渡し","ブラシ  刷毛  小競り合い","バケツ  手桶","球状のもの  電球","ボタン  スイッチ","ケーキ  焼き固めた食べ物","カメラ  写真機","カード","カート 荷車","乗り物  車両","ネコ","くさり","チーズ","むね  箱","アゴ","教会  礼拝","一回り  円形","計時","雲","コート  外套","エリ  襟飾り","クシ","ひも  つなぎ紐","牛","コップ","カーテン  幕","クッション  緩衝材","犬","扉  門戸","排水路  流出"," 引き出し","衣服","しずく  落下","耳","卵","エンジン  発動機  ","目  ","顔  正面 ","農場","羽  羽毛","指","魚","旗","床  階","飛ぶ","足","フォーク  熊手  分岐","家禽  鶏肉","骨組み  枠組み","庭いじりをする","令嬢  娘","手袋  グローブト","山羊","銃","毛  髪の毛","ハンマー  鎚","手  人手","帽子","アタマ","こころ  ハート  心臓","鉤  フック","角","馬","病院  ホスピタル","家  家庭","島","宝石","湯わかし  釜  やかん","鍵  カギ","ひざ","ナイフ","結ぶ","葉っぱ","脚  区間","ライブラリ  図書館","線","くちびる","かぎ","地図","試合  調和の取れたもの","さる","月","口","筋肉","つめ","首","はり","神経","ネット  網","鼻","木の実","オフィス  事務所","オレンジがかった  オレンジ色の","天火  オーブン","小包","ペン 筆記用具","鉛筆","絵  写真","ぶた","ピン  鋲","パイプ  筒  管","平ら  平面","平皿  平板","耕す  鋤く","懐中  ポケット","つぼ  鉢","ジャガイモ","牢屋  監獄","注入する  吸い出す","横木  柵  レール 鉄道","ネズミ","受取り  受領書  領収書","鳴り響く  電話をかける","棒","屋根  天井","根っこ","帆","学校","はさみ","ねじる  ひねる","たね","ヒツジ","棚","船","シャツ","くつ","ひふ","スカート","ヘビ","ぶん殴る","スペード  スコップ  ショベル","スポンジ","スプーン  さじ","春  泉","四角","スタンプ  印","星","駅","茎  柄","ステッキ  杖","ストッキング  長靴下","胃","商店","ストリート  街路","太陽","テーブル  一覧表","尻尾","糸","のど","おやゆび","チケット  券","舌","歯","町","列車","お盆  トレー","木  樹木","ズボン","かさ","カベ","時計  見張り","車輪","むち打ち","口笛  ホイッスル","ウィンドウ  窓","つばさ","針金  電線","虫  いも虫","可能な","すっぱい  酸味がある","怒った","自動的な  自動的な","美しい  きれいな","黒い","煮えた  ゆでた","明々と","壊れた","茶色い","安上がりな  安っぽい","化学的な","主要な  重要な","きれいな  清潔な","明るい  澄んだ","共通の  公共の","複雑な  ややこしい","気づいて  意識して","カットされた  切り詰めた","深い","依存した  頼った","早い","弾力のある","電気の  電動の","等しい  均等な","太った","肥えた  繁殖力のある","最初に  まず","固定した  一定の","フラット  平らな","自由な  無料の","よくある  ひんぱんにある","いっぱいの","世間一般の  一般的な","良い","偉大な  すごい","灰色の","つりさげ","しあわせな","必死に","健康な","高い","空っぽな  へこんだ","重要な  大切な","親切な","同じような","生きている  活気のある","長い","男性  オス","結婚している","実質的  物質的","医療","軍事的な","自然な  天然の","必然的","新しい","正常な  標準の  一般的な","開いた  あいた","平行な  並んだ","通り越して  通り過ぎて","物理的  物質的  物的","政治的な","貧乏な  貧弱な","ありうる  潜在的","現在の","秘密の","ありそうな","素早い  早い","静かな","準備のできた","赤い","普通の  いつもの","責任がある","正確な","まるい","同じ","第2に  次に","分かれた","まじめな  重大な","するどい  俊敏な","なめらかな  穏やか","粘っこい","こわばった","まっすぐな","力強い  確か","急激  突発的","優しい  あまい","高い","濃い","窮屈な","疲れた  くたびれた","正確な","暴力的","待ち時間","暖める","ぬれた","幅広い","かしこい才","黄色い","若い","覚めた","ひどい  悪い","まがった","苦い","青い","確かな","冷たい","完全な","無情な","暗い","枯れた  死んだ  麻痺した","親愛な  かわいい","変わった","汚れた","乾いた","間違った","弱々しい  かすかな","牝  雌  メス","おろかな","未来の","緑色の","不完全な  病気の","臨終の  最期の","遅れた","左の","なまけた","うるさい","低い","まざった","せまい","古い","向かい合わせの  反対側の","パブリック  公的な","荒い","残念な ","安全な  安心の","秘密の","短い","閉じた","シンプルな  単純な","遅い  ゆっくりな","小さい","柔らかな","固体の","特別の","奇妙な","痩せた  細い","白い","不正確な  間違った","世界","データ","もまた","モバイル","経済","周りに","大統領  社長","財務上の  金融の","国際的な","社会","すでに","情報","(入った)中に","＊＊＊によれば","吐き気を催させる  胸を悪くさせる");
+
+//キーコードを英文字に変換する(アルファベットとスペースキーや数字など以外は空白で受け付けるようにしている)
+var kc_to_str = ["","","","","","","","","*backspace*","*tab*","","","","*enter*","","","*shift*","*ctrl*","*alt*","","","","","","","","","","","","",""," ","","","","","","","","","","","","","","","","0","1","2","3","4","5","6","7","8","9","","","","","","","","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""];
+
+//乱数を格納する配列
+var rnd = new Array();
+
+// ダウンロード用の配列
+var download_string = "";
+
+//グローバル変数群
+var str_cnt = 0;  //文字の何番目を入力しているか示す値
+var cnt = 0;             //何問目か格納
+var typStart,typEnd;   //開始時と終了時の時刻を格納
+var cnt_upper_limit = 100; //cntの上限値
+var one_str_array = new Array(); //q_array[rnd[0]]を一文字毎に分割したものを格納した配列
+var one_str_array_length = 0; //q_array[rnd[0]]を一文字毎に分割したものを格納した配列の長さ
+var input_str = "" //プレイヤーの間違いを含まない入力
+var player_input = "" //プレイヤーの間違いを含む入力
+
+var score = 0 //プレイヤーのスコア
+var point_addition = 100
+var point_subtraction = 10
+
+var wrong_sound_count = 0; // soundのcurrentTimeをiphoneに対応させるためのフラグ
+var right_sound_count = 0;
+
+//乱数をcnt_upper_limit個作成して配列rndに格納する関数。乱数は問題数が1000個であれば、0,1,2,...,999のいずれかの値をとる
+function make_random_number_array() {
+  for (var i = 0 ; i < cnt_upper_limit + 1 ; i++)
+  {
+    rnd[i] = Math.floor( Math.random() * exp_array.length);
+  }
+}
+
+//タイマーを走らせている部分の関数。全問題を解いた後にstopする
+function timer() {
+    document.getElementById('sec').innerHTML = (((new Date()).getTime() - startTime) / 1000).toFixed(2);
+    timerid = setTimeout(function() { timer(); }, 70);
+}
+
+// 正解の音
+function right_sound() {
+	//初回([right_sound_count = 0])以外だったら音声ファイルを巻き戻す
+	if(right_sound_count > 0) {
+		document.getElementById("right_sound_id").currentTime = 0;
+	}
+
+	//[ID:right_sound]の音声ファイルを再生[play()]する
+	document.getElementById("right_sound_id").play();
+
+	//初回再生が終わった判定用に[right_sound_count]の値を0から1に変更する
+	right_sound_count = 1;
+}
+
+// タイプミスの音
+function wrong_sound() {
+	if(wrong_sound_count > 0) {
+		document.getElementById("wrong_sound_id").currentTime = 0;
+	}
+
+	document.getElementById("wrong_sound_id").play();
+
+	wrong_sound_count = 1;
+}
+
+//タイピングゲームの問題をセットする関数
+function gameSet()
+{
+  //カウント数をクリアする
+  cnt = 0;
+
+  //乱数をcnt_upper_limit個持っている配列rndを作る
+  make_random_number_array();
+
+  //q_array[rnd[0]]を一文字毎に分割したものを格納した配列
+  one_str_array = q_array[rnd[cnt]].split("");
+
+  //q_array[rnd[0]]を一文字毎に分割したものを格納した配列の長さ
+  one_str_array_length = one_str_array.length
+
+  //英単語の表示
+  var vword = document.getElementById('word');
+  vword.textContent = q_array[rnd[cnt]];
+
+  //説明文の表示
+  var vexplanation = document.getElementById('explanation');
+  vexplanation.textContent = exp_array[rnd[cnt]];
+
+  //ハイスコアのload
+  $.get('load_highscore.php', function(data) {
+  	$('#highscore').html(data);
+  });
+}
+
+//キー入力を受け取る関数
+function typeGame(evt)
+{
+  var vword = document.getElementById('word');
+  var vexplanation = document.getElementById('explanation');
+  var vinp = document.getElementById('inp');
+  var vouen = document.getElementById('ouen');
+  var vscore = document.getElementById('score');
+  var vscore_display = document.getElementById('score_display');
+  var vnumber_of_questions = document.getElementById('number_of_questions');
+
+  var starttime; //一番最初の一文字目が入力された時の時間
+
+  var kc;  //入力されたキーコードを格納する変数
+  //入力されたキーのキーコードを取得
+  if (document.all) {
+    kc = event.keyCode;
+  }
+  else {
+    kc = evt.which;
+  }
+
+  // バックスペースが押されたときの処理
+  if(kc == 8) {
+  	vouen.textContent = kc_to_str[kc];
+    return false;
+  }
+
+  // enterが押されたときの処理
+  if(kc == 13) {
+  	vouen.textContent = kc_to_str[kc];
+    return false;
+  }
+
+  //一番最初の一文字目が入力された時の時間を得る
+  if (cnt == 0 && str_cnt == 0) {
+    startTime = (new Date()).getTime();
+    timer();
+  }
+
+  player_input = player_input + kc_to_str[kc]
+
+  //入力されたキーコードと、問題文のキーコードの文字列を比較
+  if (kc_to_str[kc] == one_str_array[str_cnt]) {
+    // 単語の最初の1文字が入力された時間を記録する
+    if (str_cnt == 0) {
+      typStart = new Date();
+    }
+
+    input_str = input_str + one_str_array[str_cnt]
+    vinp.textContent = input_str;
+    str_cnt++ ;
+    vinp.style.color = 'blue';
+    vinp.style.fontSize = 32 + "pt";
+
+    //　一つの単語のキーコードが全て入力された時の処理
+    if (str_cnt == one_str_array_length) {
+      // 正解したときの音を鳴らす
+      right_sound();
+
+      // 一つの単語のキーコードが全て入力された時の時間を記録する
+      typEnd = new Date();
+
+      //終了時間－開始時間で掛かったミリ秒を取得する
+      var spelling_time = typEnd - typStart;
+
+      // 入力されたデータを一つの文字列にしてphpに送る
+      var user_input = player_input + "," + input_str + "," + spelling_time + "\n";
+      $.get('write_input.php', { name: user_input });
+
+      // 入力されたデータを文字列にして連結する
+      download_string = download_string + user_input;
+
+      // scoreを更新し、表示する
+      score = score + point_addition;
+      vscore.textContent = score;
+      vscore_display.textContent = "正解！:+" + point_addition;
+
+      // 初期化
+      player_input = ""
+      str_cnt = 0;
+      vinp.textContent = "入力が表示されます";
+      vinp.style.color = 'black';
+      vinp.style.fontSize = 23 + "pt";
+      input_str = ""
+      cnt ++; //カウント数を＋１にする
+
+      // 問題を入れ替える
+      //q_array[rnd[0]]を一文字毎に分割したものを格納した配列
+      one_str_array = q_array[rnd[cnt]].split("");
+
+      //q_array[rnd[0]]を一文字毎に分割したものを格納した配列の長さ
+      one_str_array_length = one_str_array.length
+
+      // 英単語の表示
+      vword.textContent = q_array[rnd[cnt]];
+
+      // 説明文の表示
+      vexplanation.textContent = exp_array[rnd[cnt]];
+
+      // 問題数の表示
+      vnumber_of_questions.textContent = cnt + 1;
+
+      //全文字入力したか確認
+      if (cnt == cnt_upper_limit) {
+        clearTimeout(timerid);
+        vword.textContent = "おめでとうございます！";
+        vexplanation.textContent = "クリアしました！";
+        vinp.textContent = "ダウンロードをお願いします";
+        vword.style.color = 'red';
+        vexplanation.style.color = 'aqua';
+        vinp.style.color = 'green';
+        vouen.textContent = "";
+
+        // タイムボーナスとクリアタイムの計算
+        var clear_time = (((new Date()).getTime() - startTime) / 1000).toFixed(3);
+        var time_bonus = Math.round(500000 / clear_time);
+        score = score + time_bonus;
+
+        $.get('write_highscore.php', { highscore: score }); //ハイスコアより高かったら実行するようにする
+
+        vscore.textContent = score; //スコア表示の更新
+        vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
+      }
+
+      if (cnt == 10) {
+        vouen.textContent = "10問クリア！どんどんいこう！";
+        vouen.style.color = 'maroon';
+      }
+      if (cnt == 25) {
+        vouen.textContent = "25問クリア！いい調子！";
+        vouen.style.color = 'teal';
+      }
+      if (cnt == 50) {
+        vouen.textContent = "50問クリア！ちょうど半分！";
+        vouen.style.color = 'navy';
+      }
+      if (cnt == 75) {
+        vouen.textContent = "75問クリア！あともう一息！";
+        vouen.style.color = 'blue';
+      }
+    }
+  }
+
+  // タイプミスしたとき
+  else {
+  	// scoreを更新し、表示する
+  	score = score - point_subtraction
+  	vscore.textContent = score;
+  	vscore_display.textContent = "タイプミス:-" + point_subtraction;
+
+  	wrong_sound();
+
+  }
+}
+
+
+// download buttonの部分
+var $id = function(id) {return document.getElementById(id);}
+
+window.onload = function()
+{
+    $id("download-link").addEventListener("click", function(){
+        var value = download_string;
+        var href = "data:application/octet-stream," + encodeURIComponent(value);
+        this.setAttribute("href", href);
+        download_string = ""
+    }, false);
+}
+
+</script>
+
+<style type="text/css">
+
+p {
+  font-weight: bold; /* normal　太さ */
+  font-size: 30px; /* 大きさ */
+  text-align: center; /* left, right 位置*/
+  line-height: 40px; /* 行の高さ(40-20=20を上下に振り分ける) */
+}
+
+</style>
+
+</head>
+<body onload="gameSet()">
+<h1>タイピングゲーム ver 0.40</h1>
+<br>
+<br>
+<p><span id="number_of_questions">1</span>問目</p>
+<p id="word" style="font-size: 40px;">a</p>
+<p id="explanation">b</p>
+<p id="inp" style="color: red;" style="font-size: 40px;">表示されている英単語を入力して下さい</p>
+<br>
+<br>
+<p>現在のタイム:<span id="sec">0.00</span></p>
+<p>現在のスコア:<span id="score">0</span></p>
+<p id="score_display">スコアの増減が表示されます</p>
+<br>
+<p>ハイスコア:<span id="highscore">0</span></p>
+
+<a id="download-link" href="#">Download:ゲームを終了する時に押してファイルを保存して下さい</a>
+<br>
+<br>
+<a id="ouen" style="font-size: 23px;">英単語を100個入力するとクリアです</a>
+<br>
+<br>
+<a style="font-size: 23px;">Music is VFR</a>
+
+<!-- 鳴らしたい音を読み込んでいます -->
+<audio id="wrong_sound_id" preload="auto">
+	<source src="http://cl.sd.tmu.ac.jp/~ryu/wrong_answer.mp3" type="audio/mp3">
+	<!-- <source src="http://cl.sd.tmu.ac.jp/~ryu/wrong_answer.wav" type="audio/wav"> -->
+</audio>
+
+<audio id="right_sound_id" preload="auto">
+	<source src="http://cl.sd.tmu.ac.jp/~ryu/right_answer.mp3" type="audio/mp3">
+	<!-- <source src="http://cl.sd.tmu.ac.jp/~ryu/right_answer.wav" type="audio/wav"> -->
+</audio>
+
+</body>
+</html>
