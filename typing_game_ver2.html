@@ -146,14 +146,15 @@ function typeGame(evt)
 	// バックスペースが押されたかどうか判定する
 	if (kc == 8) {
 		input_str = input_str.slice(0,-1); //最終出力文字列
+		vtyped_word.textContent = input_str;
+		vtyped_word.style.color = 'gray';
+		return false;
 	}
 	else if (kc != 13) {
 		input_str = input_str + kc_to_str[kc]; //最終出力文字列
+		vtyped_word.textContent = input_str;
+		vtyped_word.style.color = 'gray';
 	}
-
-	vtyped_word.textContent = input_str;
-	vtyped_word.style.color = 'gray';
-
 
 	//　エンターキーが押された時の動作
 	if (kc == 13) {
