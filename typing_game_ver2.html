@@ -23,7 +23,7 @@ var kc_to_str = ["","","","","","","","","B","","","","","","","","","","","",""
 var rnd = new Array();
 
 //グローバル変数群
-var cookie = 0; // cookieに値が入っているかどうかの判定関数
+var cookie_judge = 0; // cookieに値が入っているかどうかの判定関数
 
 var str_cnt = 0;  //文字の何番目を入力しているか示す値
 var cnt = 0;             //何問目か格納
@@ -45,7 +45,7 @@ var right_sound_count = 0;
 $(function(){
 	if($.cookie("sample")){
 		$("h2").text("あなたの名前は"+$.cookie("sample")+"です")
-		cookie = 1
+		cookie_judge = 1
 	}
 
 	$("#button").click(function(){
@@ -123,9 +123,9 @@ function gameSet()
 }
 
 //キー入力を受け取る関数
-if(cookie == 1){
-	function typeGame(evt)
-	{
+function typeGame(evt)
+{
+	if (cookie_judge == 1) {
 		var vword = document.getElementById('word');
 		var vtyped_word = document.getElementById('typed_word'); //既に入力された単語の文字列の部分の変数
 		var vexplanation = document.getElementById('explanation');
