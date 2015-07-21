@@ -146,14 +146,15 @@ function typeGame(evt)
 		kc = evt.which;
 		}
 
-		//一番最初の単語の一文字目が入力された時の時間を得る
-		if (cnt == 0 && str_cnt == 0) {
-		startTime = (new Date()).getTime();
-		timer();
-		}
-
 		// アルファベット以外は判定にいれない
-		if (kc >= 65 && kc <= 90) {
+		if (kc >= 65 && kc <= 90 || kc == 8 || kc == 13) {
+
+			//一番最初の単語の一文字目が入力された時の時間を得る
+			if (cnt == 0 && str_cnt == 0) {
+			startTime = (new Date()).getTime();
+			timer();
+			}
+
 			// 単語の最初の1文字が入力された時間を記録する
 			if (str_cnt == 0) {
 			  typStart = new Date();
