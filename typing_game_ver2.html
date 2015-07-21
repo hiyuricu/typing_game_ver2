@@ -43,13 +43,13 @@ var right_sound_count = 0;
 
 // cookieの情報を保存する関数
 $(function(){
-	if($.cookie("sample")){
-		$("h2").text("あなたの名前は"+$.cookie("sample")+"です")
+	if($.cookie("user_name")){
+		$("h2").text("あなたの名前は"+$.cookie("user_name")+"です")
 		cookie_judge = 1
 	}
 
 	$("#button").click(function(){
-		$.cookie("sample",$("#text").val());
+		$.cookie("user_name",$("#text").val());
 		location.href="http://cl.sd.tmu.ac.jp/~ryu/typing_game_ver2/typing_game_ver2.html"
 	})
 })
@@ -182,7 +182,7 @@ function typeGame(evt)
 			var spelling_time = typEnd - typStart;
 
 			// 入力されたデータを一つの文字列にしてphpに送る
-			var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "\n";
+			var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "," + $.cookie("user_name") + "\n";
 			$.get('write_input.php', { name: user_input });
 
 			// 最終出力文字列が正解と同じかどうか
