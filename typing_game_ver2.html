@@ -23,6 +23,8 @@ var kc_to_str = ["","","","","","","","","B","","","","","","","","","","","",""
 var rnd = new Array();
 
 //グローバル変数群
+var cookie = 0; // cookieに値が入っているかどうかの判定関数
+
 var str_cnt = 0;  //文字の何番目を入力しているか示す値
 var cnt = 0;             //何問目か格納
 var typStart,typEnd;   //開始時と終了時の時刻を格納
@@ -42,7 +44,8 @@ var right_sound_count = 0;
 // cookieの情報を保存する関数
 $(function(){
 	if($.cookie("sample")){
-		$("h2").text("cookieの中身は"+$.cookie("sample")+"です。")
+		$("h2").text("あなたの名前は"+$.cookie("sample")+"です。")
+		cookie = 1
 	}
 
 	$("#button").click(function(){
@@ -120,7 +123,7 @@ function gameSet()
 }
 
 //キー入力を受け取る関数
-if($.cookie("sample")){
+if(cookie == 1){
 	function typeGame(evt)
 	{
 		var vword = document.getElementById('word');
@@ -283,7 +286,7 @@ p {
 </head>
 <body onload="gameSet()">
 <h1>タイピングゲーム</h1>
-<h2>cookieの中身は空っぽです。</h2>
+<h2>名前をフォームに入力してボタンを押してください</h2>
 <input type="text" name="text" id="text"/><input type="button" value="cookieに保存する" id="button"/>
 <br>
 <br>
