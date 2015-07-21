@@ -42,8 +42,9 @@ var right_sound_count = 0;
 // cookieの情報を保存する関数
 $(function(){
 	if($.cookie("sample")){
-		$("h1").text("cookieの中身は"+$.cookie("sample")+"です。")
+		$("h2").text("cookieの中身は"+$.cookie("sample")+"です。")
 	}
+
 	$("#button").click(function(){
 		$.cookie("sample",$("#text").val());
 		location.href="http://cl.sd.tmu.ac.jp/~ryu/typing_game_ver2/typing_game_ver2.html"
