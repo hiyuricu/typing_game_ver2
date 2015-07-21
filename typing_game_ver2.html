@@ -6,6 +6,7 @@
 <title>タイピングゲーム</title>
 
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script type="text/javascript" src="jquery.cookie.js"></script>
 <script>
 document.onkeydown = typeGame;  //キー押下時に関数typeGame()を呼び出す
 
@@ -37,6 +38,17 @@ var point_subtraction = 10
 
 var wrong_sound_count = 0; // soundのcurrentTimeをiphoneに対応させるためのフラグ
 var right_sound_count = 0;
+
+// cookieの情報を保存する関数
+$(function(){
+	if($.cookie("sample")){
+		$("h1").text("cookieの中身は"+$.cookie("sample")+"です。")
+	}
+	$("#button").click(function(){
+		$.cookie("sample",$("#text").val());
+		location.href="http://cl.sd.tmu.ac.jp/~ryu/typing_game_ver2/typing_game_ver2.html"
+	})
+})
 
 //乱数をcnt_upper_limit個作成して配列rndに格納する関数。乱数は問題数が1000個であれば、0,1,2,...,999のいずれかの値をとる
 function make_random_number_array() {
@@ -107,149 +119,151 @@ function gameSet()
 }
 
 //キー入力を受け取る関数
-function typeGame(evt)
-{
-	var vword = document.getElementById('word');
-	var vtyped_word = document.getElementById('typed_word'); //既に入力された単語の文字列の部分の変数
-	var vexplanation = document.getElementById('explanation');
-	var vouen = document.getElementById('ouen');
-	var vscore = document.getElementById('score');
-	var vscore_display = document.getElementById('score_display');
-	var vnumber_of_questions = document.getElementById('number_of_questions');
+if($.cookie("sample")){
+	function typeGame(evt)
+	{
+		var vword = document.getElementById('word');
+		var vtyped_word = document.getElementById('typed_word'); //既に入力された単語の文字列の部分の変数
+		var vexplanation = document.getElementById('explanation');
+		var vouen = document.getElementById('ouen');
+		var vscore = document.getElementById('score');
+		var vscore_display = document.getElementById('score_display');
+		var vnumber_of_questions = document.getElementById('number_of_questions');
 
-	var starttime; //一番最初の一文字目が入力された時の時間
+		var starttime; //一番最初の一文字目が入力された時の時間
 
-	var kc;  //入力されたキーコードを格納する変数
+		var kc;  //入力されたキーコードを格納する変数
 
-	//入力されたキーのキーコードを取得
-	if (document.all) {
-	kc = event.keyCode;
-	}
-	else {
-	kc = evt.which;
-	}
-
-	//一番最初の単語の一文字目が入力された時の時間を得る
-	if (cnt == 0 && str_cnt == 0) {
-	startTime = (new Date()).getTime();
-	timer();
-	}
-
-	// 単語の最初の1文字が入力された時間を記録する
-	if (str_cnt == 0) {
-	  typStart = new Date();
-	}
-
-	player_input = player_input + kc_to_str[kc] //バックスペースを含むユーザが入力した文字列
-	str_cnt++;
-
-	// バックスペースが押されたかどうか判定する
-	if (kc == 8) {
-		input_str = input_str.slice(0,-1); //最終出力文字列
-		vtyped_word.textContent = input_str;
-		vtyped_word.style.color = 'gray';
-		return false;
-	}
-	else if (kc != 13) {
-		input_str = input_str + kc_to_str[kc]; //最終出力文字列
-		vtyped_word.textContent = input_str;
-		vtyped_word.style.color = 'gray';
-	}
-
-	//　エンターキーが押された時の動作
-	if (kc == 13) {
-		// 一つの単語のキーコードが全て入力された時の時間を記録する
-		typEnd = new Date();
-
-		//終了時間－開始時間で掛かったミリ秒を取得する
-		var spelling_time = typEnd - typStart;
-
-		// 入力されたデータを一つの文字列にしてphpに送る
-		var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "\n";
-		$.get('write_input.php', { name: user_input });
-
-		// 最終出力文字列が正解と同じかどうか
-		if (input_str == q_array[rnd[cnt]]) {
-			right_sound(); // 正解したときの音を鳴らす
-
-			// scoreを更新し、表示する
-			score = score + point_addition;
-			vscore.textContent = score;
-			vscore_display.textContent = "正解！:+" + point_addition;
+		//入力されたキーのキーコードを取得
+		if (document.all) {
+		kc = event.keyCode;
 		}
-		// タイプミスしたとき
 		else {
-			// scoreを更新し、表示する
-			score = score - point_subtraction
-			vscore.textContent = score;
-			vscore_display.textContent = "タイプミス:-" + point_subtraction;
-
-			wrong_sound(); // 不正解のときの音を鳴らす
+		kc = evt.which;
 		}
 
-		// 初期化
-		player_input = ""
-		str_cnt = 0;
-		input_str = ""
-		cnt ++; //カウント数を＋１にする
-
-		// 問題を入れ替える
-		//q_array[rnd[0]]を一文字毎に分割したものを格納した配列
-		one_str_array = q_array[rnd[cnt]].split("");
-
-		//q_array[rnd[0]]を一文字毎に分割したものを格納した配列の長さ
-		one_str_array_length = one_str_array.length
-
-		// 英単語の表示
-		vword.textContent = q_array[rnd[cnt]];
-		vtyped_word.textContent = "　　　　　　　　　　　　　　　　　　　　　　　　　";
-
-		// 説明文の表示
-		vexplanation.textContent = exp_array[rnd[cnt]];
-
-		// 問題数の表示
-		vnumber_of_questions.textContent = cnt + 1;
-
-		//100単語入力したか確認
-		if (cnt == cnt_upper_limit) {
-		clearTimeout(timerid);
-		vword.textContent = "ゲームクリア！";
-		vtyped_word.textContent = "";
-		vexplanation.textContent = "プレイして頂きありがとうございました！";
-		vword.style.color = 'red';
-		vexplanation.style.color = 'aqua';
-		vouen.textContent = "";
-
-		// タイムボーナスとクリアタイムの計算
-		var clear_time = (((new Date()).getTime() - startTime) / 1000).toFixed(3);
-		var time_bonus = Math.round(500000 / clear_time);
-		score = score + time_bonus;
-
-		$.get('write_highscore.php', { highscore: score }); //ハイスコアより高かったら実行するようにする
-
-		vscore.textContent = score; //スコア表示の更新
-		vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
+		//一番最初の単語の一文字目が入力された時の時間を得る
+		if (cnt == 0 && str_cnt == 0) {
+		startTime = (new Date()).getTime();
+		timer();
 		}
 
-		// if (cnt == 1) {
-		//   vouen.textContent = "1問クリア！初めの一歩！";
-		//   vouen.style.color = 'brack';
-		// }
-		if (cnt == 10) {
-		vouen.textContent = "10問クリア！どんどんいこう！";
-		vouen.style.color = 'maroon';
+		// 単語の最初の1文字が入力された時間を記録する
+		if (str_cnt == 0) {
+		  typStart = new Date();
 		}
-		if (cnt == 25) {
-		vouen.textContent = "25問クリア！いい調子！";
-		vouen.style.color = 'teal';
+
+		player_input = player_input + kc_to_str[kc] //バックスペースを含むユーザが入力した文字列
+		str_cnt++;
+
+		// バックスペースが押されたかどうか判定する
+		if (kc == 8) {
+			input_str = input_str.slice(0,-1); //最終出力文字列
+			vtyped_word.textContent = input_str;
+			vtyped_word.style.color = 'gray';
+			return false;
 		}
-		if (cnt == 50) {
-		vouen.textContent = "50問クリア！折り返し地点到達！";
-		vouen.style.color = 'navy';
+		else if (kc != 13) {
+			input_str = input_str + kc_to_str[kc]; //最終出力文字列
+			vtyped_word.textContent = input_str;
+			vtyped_word.style.color = 'gray';
 		}
-		if (cnt == 75) {
-		vouen.textContent = "75問クリア！あともう一息！";
-		vouen.style.color = 'blue';
+
+		//　エンターキーが押された時の動作
+		if (kc == 13) {
+			// 一つの単語のキーコードが全て入力された時の時間を記録する
+			typEnd = new Date();
+
+			//終了時間－開始時間で掛かったミリ秒を取得する
+			var spelling_time = typEnd - typStart;
+
+			// 入力されたデータを一つの文字列にしてphpに送る
+			var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "\n";
+			$.get('write_input.php', { name: user_input });
+
+			// 最終出力文字列が正解と同じかどうか
+			if (input_str == q_array[rnd[cnt]]) {
+				right_sound(); // 正解したときの音を鳴らす
+
+				// scoreを更新し、表示する
+				score = score + point_addition;
+				vscore.textContent = score;
+				vscore_display.textContent = "正解！:+" + point_addition;
+			}
+			// タイプミスしたとき
+			else {
+				// scoreを更新し、表示する
+				score = score - point_subtraction
+				vscore.textContent = score;
+				vscore_display.textContent = "タイプミス:-" + point_subtraction;
+
+				wrong_sound(); // 不正解のときの音を鳴らす
+			}
+
+			// 初期化
+			player_input = ""
+			str_cnt = 0;
+			input_str = ""
+			cnt ++; //カウント数を＋１にする
+
+			// 問題を入れ替える
+			//q_array[rnd[0]]を一文字毎に分割したものを格納した配列
+			one_str_array = q_array[rnd[cnt]].split("");
+
+			//q_array[rnd[0]]を一文字毎に分割したものを格納した配列の長さ
+			one_str_array_length = one_str_array.length
+
+			// 英単語の表示
+			vword.textContent = q_array[rnd[cnt]];
+			vtyped_word.textContent = "　　　　　　　　　　　　　　　　　　　　　　　　　";
+
+			// 説明文の表示
+			vexplanation.textContent = exp_array[rnd[cnt]];
+
+			// 問題数の表示
+			vnumber_of_questions.textContent = cnt + 1;
+
+			//100単語入力したか確認
+			if (cnt == cnt_upper_limit) {
+			clearTimeout(timerid);
+			vword.textContent = "ゲームクリア！";
+			vtyped_word.textContent = "";
+			vexplanation.textContent = "プレイして頂きありがとうございました！";
+			vword.style.color = 'red';
+			vexplanation.style.color = 'aqua';
+			vouen.textContent = "";
+
+			// タイムボーナスとクリアタイムの計算
+			var clear_time = (((new Date()).getTime() - startTime) / 1000).toFixed(3);
+			var time_bonus = Math.round(500000 / clear_time);
+			score = score + time_bonus;
+
+			$.get('write_highscore.php', { highscore: score }); //ハイスコアより高かったら実行するようにする
+
+			vscore.textContent = score; //スコア表示の更新
+			vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
+			}
+
+			// if (cnt == 1) {
+			//   vouen.textContent = "1問クリア！初めの一歩！";
+			//   vouen.style.color = 'brack';
+			// }
+			if (cnt == 10) {
+			vouen.textContent = "10問クリア！どんどんいこう！";
+			vouen.style.color = 'maroon';
+			}
+			if (cnt == 25) {
+			vouen.textContent = "25問クリア！いい調子！";
+			vouen.style.color = 'teal';
+			}
+			if (cnt == 50) {
+			vouen.textContent = "50問クリア！折り返し地点到達！";
+			vouen.style.color = 'navy';
+			}
+			if (cnt == 75) {
+			vouen.textContent = "75問クリア！あともう一息！";
+			vouen.style.color = 'blue';
+			}
 		}
 	}
 }
@@ -268,6 +282,10 @@ p {
 </head>
 <body onload="gameSet()">
 <h1>タイピングゲーム</h1>
+<h2>cookieの中身は空っぽです。</h2>
+<input type="text" name="text" id="text"/><input type="button" value="cookieに保存する" id="button"/>
+<br>
+<br>
 <a id="ouen" style="font-size: 20px;">英単語を入力してください。キーを入力するとゲームが始まります。</a>
 <p><span id="number_of_questions">1</span>問目</p>
 <p style="font-size: 50px;"><span id="word">a</span></p>
