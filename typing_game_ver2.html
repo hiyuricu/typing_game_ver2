@@ -41,7 +41,7 @@ var point_subtraction = 10
 var wrong_sound_count = 0; // soundのcurrentTimeをiphoneに対応させるためのフラグ
 var right_sound_count = 0;
 
-// cookieの情報を保存する関数
+// cookieの情報を読み込んだり、保存する関数
 $(function(){
 	if($.cookie("user_name")){
 		$("h2").text("あなたの名前は"+$.cookie("user_name")+"です")
@@ -152,121 +152,124 @@ function typeGame(evt)
 		timer();
 		}
 
-		// 単語の最初の1文字が入力された時間を記録する
-		if (str_cnt == 0) {
-		  typStart = new Date();
-		}
-
-		player_input = player_input + kc_to_str[kc] //バックスペースを含むユーザが入力した文字列
-		str_cnt++;
-
-		// バックスペースが押されたかどうか判定する
-		if (kc == 8) {
-			input_str = input_str.slice(0,-1); //最終出力文字列
-			vtyped_word.textContent = input_str;
-			vtyped_word.style.color = 'gray';
-			return false;
-		}
-		else if (kc != 13) {
-			input_str = input_str + kc_to_str[kc]; //最終出力文字列
-			vtyped_word.textContent = input_str;
-			vtyped_word.style.color = 'gray';
-		}
-
-		//　エンターキーが押された時の動作
-		if (kc == 13) {
-			// 一つの単語のキーコードが全て入力された時の時間を記録する
-			typEnd = new Date();
-
-			//終了時間－開始時間で掛かったミリ秒を取得する
-			var spelling_time = typEnd - typStart;
-
-			// 入力されたデータを一つの文字列にしてphpに送る
-			var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "," + $.cookie("user_name") + "\n";
-			$.get('write_input.php', { name: user_input });
-
-			// 最終出力文字列が正解と同じかどうか
-			if (input_str == q_array[rnd[cnt]]) {
-				right_sound(); // 正解したときの音を鳴らす
-
-				// scoreを更新し、表示する
-				score = score + point_addition;
-				vscore.textContent = score;
-				vscore_display.textContent = "正解！:+" + point_addition;
-			}
-			// タイプミスしたとき
-			else {
-				// scoreを更新し、表示する
-				score = score - point_subtraction
-				vscore.textContent = score;
-				vscore_display.textContent = "タイプミス:-" + point_subtraction;
-
-				wrong_sound(); // 不正解のときの音を鳴らす
+		// アルファベット以外は判定にいれない
+		if (kc >= 65 && kc <= 90) {
+			// 単語の最初の1文字が入力された時間を記録する
+			if (str_cnt == 0) {
+			  typStart = new Date();
 			}
 
-			// 初期化
-			player_input = ""
-			str_cnt = 0;
-			input_str = ""
-			cnt ++; //カウント数を＋１にする
+			player_input = player_input + kc_to_str[kc] //バックスペースを含むユーザが入力した文字列
+			str_cnt++;
 
-			// 問題を入れ替える
-			//q_array[rnd[0]]を一文字毎に分割したものを格納した配列
-			one_str_array = q_array[rnd[cnt]].split("");
-
-			//q_array[rnd[0]]を一文字毎に分割したものを格納した配列の長さ
-			one_str_array_length = one_str_array.length
-
-			// 英単語の表示
-			vword.textContent = q_array[rnd[cnt]];
-			vtyped_word.textContent = "　　　　　　　　　　　　　　　　　　　　　　　　　";
-
-			// 説明文の表示
-			vexplanation.textContent = exp_array[rnd[cnt]];
-
-			// 問題数の表示
-			vnumber_of_questions.textContent = cnt + 1;
-
-			//100単語入力したか確認
-			if (cnt == cnt_upper_limit) {
-			clearTimeout(timerid);
-			vword.textContent = "ゲームクリア！";
-			vtyped_word.textContent = "";
-			vexplanation.textContent = "プレイして頂きありがとうございました！";
-			vword.style.color = 'red';
-			vexplanation.style.color = 'aqua';
-			vouen.textContent = "";
-
-			// タイムボーナスとクリアタイムの計算
-			var clear_time = (((new Date()).getTime() - startTime) / 1000).toFixed(3);
-			var time_bonus = Math.round(500000 / clear_time);
-			score = score + time_bonus;
-
-			$.get('write_highscore.php', { highscore: score }); //ハイスコアより高かったら実行するようにする
-
-			vscore.textContent = score; //スコア表示の更新
-			vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
+			// バックスペースが押されたかどうか判定する
+			if (kc == 8) {
+				input_str = input_str.slice(0,-1); //最終出力文字列
+				vtyped_word.textContent = input_str;
+				vtyped_word.style.color = 'gray';
+				return false;
+			}
+			else if (kc != 13) {
+				input_str = input_str + kc_to_str[kc]; //最終出力文字列
+				vtyped_word.textContent = input_str;
+				vtyped_word.style.color = 'gray';
 			}
 
-			// if (cnt == 1) {
-			//   vouen.textContent = "1問クリア！初めの一歩！";
-			//   vouen.style.color = 'brack';
-			// }
-			if (cnt == 10) {
-			vouen.textContent = "10問クリア！どんどんいこう！";
-			vouen.style.color = 'maroon';
-			}
-			if (cnt == 25) {
-			vouen.textContent = "25問クリア！いい調子！";
-			vouen.style.color = 'teal';
-			}
-			if (cnt == 50) {
-			vouen.textContent = "50問クリア！折り返し地点到達！";
-			vouen.style.color = 'navy';
-			}
-			if (cnt == 75) {
-			vouen.textContent = "75問クリア！あともう一息！";
-			vouen.style.color = 'blue';
+			//　エンターキーが押された時の動作
+			if (kc == 13) {
+				// 一つの単語のキーコードが全て入力された時の時間を記録する
+				typEnd = new Date();
+
+				//終了時間－開始時間で掛かったミリ秒を取得する
+				var spelling_time = typEnd - typStart;
+
+				// 入力されたデータを一つの文字列にしてphpに送る
+				var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "," + $.cookie("user_name") + "\n";
+				$.get('write_input.php', { name: user_input });
+
+				// 最終出力文字列が正解と同じかどうか
+				if (input_str == q_array[rnd[cnt]]) {
+					right_sound(); // 正解したときの音を鳴らす
+
+					// scoreを更新し、表示する
+					score = score + point_addition;
+					vscore.textContent = score;
+					vscore_display.textContent = "正解！:+" + point_addition;
+				}
+				// タイプミスしたとき
+				else {
+					// scoreを更新し、表示する
+					score = score - point_subtraction
+					vscore.textContent = score;
+					vscore_display.textContent = "タイプミス:-" + point_subtraction;
+
+					wrong_sound(); // 不正解のときの音を鳴らす
+				}
+
+				// 初期化
+				player_input = ""
+				str_cnt = 0;
+				input_str = ""
+				cnt ++; //カウント数を＋１にする
+
+				// 問題を入れ替える
+				//q_array[rnd[0]]を一文字毎に分割したものを格納した配列
+				one_str_array = q_array[rnd[cnt]].split("");
+
+				//q_array[rnd[0]]を一文字毎に分割したものを格納した配列の長さ
+				one_str_array_length = one_str_array.length
+
+				// 英単語の表示
+				vword.textContent = q_array[rnd[cnt]];
+				vtyped_word.textContent = "　　　　　　　　　　　　　　　　　　　　　　　　　";
+
+				// 説明文の表示
+				vexplanation.textContent = exp_array[rnd[cnt]];
+
+				// 問題数の表示
+				vnumber_of_questions.textContent = cnt + 1;
+
+				//100単語入力したか確認
+				if (cnt == cnt_upper_limit) {
+				clearTimeout(timerid);
+				vword.textContent = "ゲームクリア！";
+				vtyped_word.textContent = "";
+				vexplanation.textContent = "プレイして頂きありがとうございました！";
+				vword.style.color = 'red';
+				vexplanation.style.color = 'aqua';
+				vouen.textContent = "";
+
+				// タイムボーナスとクリアタイムの計算
+				var clear_time = (((new Date()).getTime() - startTime) / 1000).toFixed(3);
+				var time_bonus = Math.round(500000 / clear_time);
+				score = score + time_bonus;
+
+				$.get('write_highscore.php', { highscore: score }); //ハイスコアより高かったら実行するようにする
+
+				vscore.textContent = score; //スコア表示の更新
+				vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
+				}
+
+				// if (cnt == 1) {
+				//   vouen.textContent = "1問クリア！初めの一歩！";
+				//   vouen.style.color = 'brack';
+				// }
+				if (cnt == 10) {
+				vouen.textContent = "10問クリア！どんどんいこう！";
+				vouen.style.color = 'maroon';
+				}
+				if (cnt == 25) {
+				vouen.textContent = "25問クリア！いい調子！";
+				vouen.style.color = 'teal';
+				}
+				if (cnt == 50) {
+				vouen.textContent = "50問クリア！折り返し地点到達！";
+				vouen.style.color = 'navy';
+				}
+				if (cnt == 75) {
+				vouen.textContent = "75問クリア！あともう一息！";
+				vouen.style.color = 'blue';
+				}
 			}
 		}
 	}
