@@ -273,17 +273,30 @@ function typeGame(evt)
 					vouen.style.color = 'maroon';
 					}
 					if (cnt == 25) {
-					vouen.textContent = "25問クリア！いい調子！";
-					vouen.style.color = 'teal';
-					}
-					if (cnt == 50) {
-					vouen.textContent = "50問クリア！折り返し地点到達！";
+					vouen.textContent = "25問クリア！折り返し地点到達！";
 					vouen.style.color = 'navy';
 					}
-					if (cnt == 75) {
-					vouen.textContent = "75問クリア！あともう一息！";
+					if (cnt == 40) {
+					vouen.textContent = "40問クリア！あともう一息！";
 					vouen.style.color = 'blue';
 					}
+
+					// if (cnt == 10) {
+					// vouen.textContent = "10問クリア！どんどんいこう！";
+					// vouen.style.color = 'maroon';
+					// }
+					// if (cnt == 25) {
+					// vouen.textContent = "25問クリア！いい調子！";
+					// vouen.style.color = 'teal';
+					// }
+					// if (cnt == 50) {
+					// vouen.textContent = "50問クリア！折り返し地点到達！";
+					// vouen.style.color = 'navy';
+					// }
+					// if (cnt == 75) {
+					// vouen.textContent = "75問クリア！あともう一息！";
+					// vouen.style.color = 'blue';
+					// }
 				}
 			}
 		}
@@ -320,9 +333,11 @@ p {
 <p>最高得点：<span id="highscore">0</span></p>
 <br>
 <a style="font-size: 23px;">〜ゲーム説明〜<br>
-表示されている英単語を100単語入力してスコアを競います。<br>
-スコアはできるだけ速く正確にタイピングを行うほど高くなります。<br>
-キーを入力するとゲームがスタートします。</a><br>
+表示されている英単語を50単語入力してスコアを競います。<br>
+アルファベットを入力するとゲームがスタートします。<br>
+正しく英単語を入力して、エンターキーを入力してください。<br>
+エンターキーを入力すると次の単語が表示されます。
+速く正確にタイピングを行うほどスコアは高くなります。</a><br>
 <br>
 <a style="font-size: 23px;">〜注意〜<br>
 このゲームは効果音が出ます。ご注意ください。</a><br>
