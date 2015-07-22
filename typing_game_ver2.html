@@ -28,15 +28,16 @@ var cookie_judge = 0; // cookieに値が入っているかどうかの判定関�
 var str_cnt = 0;  //文字の何番目を入力しているか示す値
 var cnt = 0;             //何問目か格納
 var typStart,typEnd;   //開始時と終了時の時刻を格納
-var cnt_upper_limit = 100; //cntの上限値
+var cnt_upper_limit = 50; //cntの上限値
 var one_str_array = new Array(); //q_array[rnd[0]]を一文字毎に分割したものを格納した配列
 var one_str_array_length = 0; //q_array[rnd[0]]を一文字毎に分割したものを格納した配列の長さ
 var input_str = "" //プレイヤーの間違いを含まない入力
 var player_input = "" //プレイヤーの間違いを含む入力
 
 var score = 0 //プレイヤーのスコア
-var point_addition = 100
-var point_subtraction = 10
+var point_addition = 100 //正解した時の点数
+var point_subtraction = 10 //不正解した時の減点数
+var correct_answer = 0 //正解数
 
 var wrong_sound_count = 0; // soundのcurrentTimeをiphoneに対応させるためのフラグ
 var right_sound_count = 0;
@@ -201,6 +202,7 @@ function typeGame(evt)
 					score = score + point_addition;
 					vscore.textContent = score;
 					vscore_display.textContent = "正解！:+" + point_addition;
+					correct_answer++;
 				}
 				// タイプミスしたとき
 				else {
@@ -216,7 +218,7 @@ function typeGame(evt)
 				player_input = ""
 				str_cnt = 0;
 				input_str = ""
-				cnt ++; //カウント数を＋１にする
+				cnt++; //カウント数を＋１にする
 
 				// 問題を入れ替える
 				//q_array[rnd[0]]を一文字毎に分割したものを格納した配列
@@ -247,7 +249,7 @@ function typeGame(evt)
 
 				// タイムボーナスとクリアタイムの計算
 				var clear_time = (((new Date()).getTime() - startTime) / 1000).toFixed(3);
-				var time_bonus = Math.round(500000 / clear_time);
+				var time_bonus = Math.round(5000 / clear_time) * correct_answer;
 				score = score + time_bonus;
 
 				$.get('write_highscore.php', { highscore: score , challenger: $.cookie("user_name")}); //最高得点更新の部分
