@@ -247,31 +247,27 @@ function typeGame(evt)
 
 					//設定した単語数入力したか確認
 					if (cnt == cnt_upper_limit) {
-					clearTimeout(timerid);
-					vword.textContent = "ゲームクリア！";
-					vtyped_word.textContent = "";
-					vexplanation.textContent = "プレイして頂きありがとうございました！";
-					vword.style.color = 'red';
-					vexplanation.style.color = 'aqua';
-					vouen.textContent = "";
+						clearTimeout(timerid);
+						vword.textContent = "ゲームクリア！";
+						vtyped_word.textContent = "";
+						vexplanation.textContent = "プレイして頂きありがとうございました！";
+						vword.style.color = 'red';
+						vexplanation.style.color = 'aqua';
+						vouen.textContent = "";
 
-					// タイムボーナスとクリアタイムの計算
-					var clear_time = (((new Date()).getTime() - startTime) / 1000).toFixed(3);
-					var time_bonus = Math.round(5000 / clear_time) * correct_answer;
-					score = score + time_bonus;
+						// タイムボーナスとクリアタイムの計算
+						var clear_time = (((new Date()).getTime() - startTime) / 1000).toFixed(3);
+						var time_bonus = Math.round(5000 / clear_time) * correct_answer;
+						score = score + time_bonus;
 
-					$.get('write_highscore.php', { highscore: score , challenger: $.cookie("user_name")}); //最高得点更新の部分
+						$.get('write_highscore.php', { highscore: score , challenger: $.cookie("user_name")}); //最高得点更新の部分
 
-					vscore.textContent = score; //スコア表示の更新
-					vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
+						vscore.textContent = score; //スコア表示の更新
+						vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
+
+						clear_flag = 1
 					}
 
-					clear_flag = 1
-
-					// if (cnt == 1) {
-					//   vouen.textContent = "1問クリア！初めの一歩！";
-					//   vouen.style.color = 'brack';
-					// }
 					if (cnt == 10) {
 					vouen.textContent = "10問クリア！どんどんいこう！";
 					vouen.style.color = 'maroon';
