@@ -120,6 +120,11 @@ function gameSet()
   $.get('load_highscore.php', function(data) {
   	$('#highscore').html(data);
   });
+
+  //最高得点者のload
+  $.get('load_highscore_user.php', function(data) {
+  	$('#highscore_user').html(data);
+  });
 }
 
 //キー入力を受け取る関数
@@ -146,7 +151,7 @@ function typeGame(evt)
 		kc = evt.which;
 		}
 
-		// アルファベット以外は判定にいれない
+		// アルファベットとバックスペース、エンターキー以外は判定にいれない
 		if (kc >= 65 && kc <= 90 || kc == 8 || kc == 13) {
 
 			//一番最初の単語の一文字目が入力された時の時間を得る
@@ -245,7 +250,7 @@ function typeGame(evt)
 				var time_bonus = Math.round(500000 / clear_time);
 				score = score + time_bonus;
 
-				$.get('write_highscore.php', { highscore: score }); //ハイスコアより高かったら実行するようにする
+				$.get('write_highscore.php', { highscore: score , challenger: $.cookie("user_name")}); //最高得点更新の部分
 
 				vscore.textContent = score; //スコア表示の更新
 				vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
@@ -302,7 +307,8 @@ p {
 <p>現在のタイム:<span id="sec">0.00</span></p>
 <p>現在のスコア:<span id="score">0</span></p>
 <p id="score_display">スコアの増減が表示されます</p>
-<p>ハイスコア:<span id="highscore">0</span></p>
+<p>現在の最高得点者は:<span id="highscore_user">hoge</span>さんです</p>
+<p>最高得点:<span id="highscore">0</span></p>
 <br>
 <a style="font-size: 23px;">〜ゲーム説明〜<br>
 表示されている英単語を100単語入力してスコアを競います。<br>
