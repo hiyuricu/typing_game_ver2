@@ -195,9 +195,11 @@ function typeGame(evt)
 					//終了時間－開始時間で掛かったミリ秒を取得する
 					var spelling_time = typEnd - typStart;
 
-					// 入力されたデータを一つの文字列にしてphpに送る
-					var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "," + $.cookie("user_name") + "\n";
-					$.get('write_input.php', { name: user_input });
+					// 入力されたデータを一つの文字列にしてphpに送る。クリアした後は受け付けないようにしている
+					if (cnt < cnt_upper_limit) {
+						var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "," + $.cookie("user_name") + "\n";
+						$.get('write_input.php', { name: user_input });
+					}
 
 					// 最終出力文字列が正解と同じかどうか
 					if (input_str == q_array[rnd[cnt]]) {
@@ -242,7 +244,7 @@ function typeGame(evt)
 					// 問題数の表示
 					vnumber_of_questions.textContent = cnt + 1;
 
-					//100単語入力したか確認
+					//設定した単語数入力したか確認
 					if (cnt == cnt_upper_limit) {
 					clearTimeout(timerid);
 					vword.textContent = "ゲームクリア！";
