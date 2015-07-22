@@ -38,6 +38,7 @@ var score = 0 //プレイヤーのスコア
 var point_addition = 100 //正解した時の点数
 var point_subtraction = 10 //不正解した時の減点数
 var correct_answer = 0 //正解数
+var clear_flag = 0 //クリアしたかどうかのフラグ
 
 var wrong_sound_count = 0; // soundのcurrentTimeをiphoneに対応させるためのフラグ
 var right_sound_count = 0;
@@ -196,7 +197,7 @@ function typeGame(evt)
 					var spelling_time = typEnd - typStart;
 
 					// 入力されたデータを一つの文字列にしてphpに送る。クリアした後は受け付けないようにしている
-					if (cnt < cnt_upper_limit) {
+					if (clear_flag == 0) {
 						var user_input = player_input + "," +  input_str + "," + q_array[rnd[cnt]] + "," + spelling_time + "," + $.cookie("user_name") + "\n";
 						$.get('write_input.php', { name: user_input });
 					}
@@ -264,6 +265,8 @@ function typeGame(evt)
 					vscore.textContent = score; //スコア表示の更新
 					vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
 					}
+
+					clear_flag = 1
 
 					// if (cnt == 1) {
 					//   vouen.textContent = "1問クリア！初めの一歩！";
