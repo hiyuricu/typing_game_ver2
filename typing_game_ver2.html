@@ -209,7 +209,7 @@ function typeGame(evt)
 						// scoreを更新し、表示する
 						score = score + point_addition;
 						vscore.textContent = score;
-						vscore_display.textContent = "正解！:+" + point_addition;
+						vscore_display.textContent = "Correct！:+" + point_addition;
 						correct_answer++;
 					}
 					// タイプミスしたとき
@@ -217,7 +217,7 @@ function typeGame(evt)
 						// scoreを更新し、表示する
 						score = score - point_subtraction
 						vscore.textContent = score;
-						vscore_display.textContent = "タイプミス:-" + point_subtraction;
+						vscore_display.textContent = "Miss..:-" + point_subtraction;
 
 						wrong_sound(); // 不正解のときの音を鳴らす
 					}
@@ -248,9 +248,9 @@ function typeGame(evt)
 					//設定した単語数入力したか確認
 					if (cnt == cnt_upper_limit) {
 						clearTimeout(timerid);
-						vword.textContent = "ゲームクリア！";
+						vword.textContent = "Clear！";
 						vtyped_word.textContent = "";
-						vexplanation.textContent = "プレイして頂きありがとうございました！";
+						vexplanation.textContent = "Thank you for playing！";
 						vword.style.color = 'red';
 						vexplanation.style.color = 'aqua';
 						vouen.textContent = "";
@@ -263,7 +263,7 @@ function typeGame(evt)
 						$.get('write_highscore.php', { highscore: score , challenger: $.cookie("user_name")}); //最高得点更新の部分
 
 						vscore.textContent = score; //スコア表示の更新
-						vscore_display.textContent = "タイムボーナス！！:+" + time_bonus;
+						vscore_display.textContent = "Time Bonus！！:+" + time_bonus;
 
 						clear_flag = 1
 					}
